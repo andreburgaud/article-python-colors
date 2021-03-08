@@ -9,9 +9,11 @@ import color
 
 def test():
     """Simple Python test for color."""
-    default_colors = color.get_text_attr()
-    default_bg = default_colors & 0x0070
-    color.set_text_attr(color.FOREGROUND_BLUE | default_bg | color.FOREGROUND_INTENSITY)
+    default_colors = color.get_text_attr()  # Save default attributes to reset later
+    _, _, bg_color, bg_intensity = color.get_distinct_attr()
+    color.set_text_attr(
+        bg_color | bg_intensity | color.FOREGROUND_BLUE | color.FOREGROUND_INTENSITY
+    )
     print("===========================================")
     color.set_text_attr(
         color.FOREGROUND_BLUE
@@ -28,10 +30,11 @@ def test():
         | color.BACKGROUND_INTENSITY
     )
     print("Completely Different!")
-    color.set_text_attr(default_colors)
-    color.set_text_attr(color.FOREGROUND_RED | default_bg | color.FOREGROUND_INTENSITY)
+    color.set_text_attr(
+        bg_color | bg_intensity | color.FOREGROUND_RED | color.FOREGROUND_INTENSITY
+    )
     print("===========================================")
-    color.set_text_attr(default_colors)
+    color.set_text_attr(default_colors)  # Reset to default console attributes
 
 
 if __name__ == "__main__":

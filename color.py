@@ -4,25 +4,25 @@ Uses ctypes and Win32 methods SetConsoleTextAttribute and
 GetConsoleScreenBufferInfo.
 """
 
-from ctypes import windll, Structure, c_short, c_ushort, byref
+import ctypes
 
-SHORT = c_short
-WORD = c_ushort
+SHORT = ctypes.c_short
+WORD = ctypes.c_ushort
 
 
-class COORD(Structure):
+class COORD(ctypes.Structure):
     """struct in wincon.h."""
 
     _fields_ = [("X", SHORT), ("Y", SHORT)]
 
 
-class SMALL_RECT(Structure):
+class SMALL_RECT(ctypes.Structure):
     """struct in wincon.h."""
 
     _fields_ = [("Left", SHORT), ("Top", SHORT), ("Right", SHORT), ("Bottom", SHORT)]
 
 
-class CONSOLE_SCREEN_BUFFER_INFO(Structure):
+class CONSOLE_SCREEN_BUFFER_INFO(ctypes.Structure):
     """struct in wincon.h."""
 
     _fields_ = [
@@ -60,17 +60,29 @@ BACKGROUND_YELLOW = 0x0060
 BACKGROUND_GREY = 0x0070
 BACKGROUND_INTENSITY = 0x0080  # background color is intensified.
 
-stdout_handle = windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
-SetConsoleTextAttribute = windll.kernel32.SetConsoleTextAttribute
-GetConsoleScreenBufferInfo = windll.kernel32.GetConsoleScreenBufferInfo
+stdout_handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
+SetConsoleTextAttribute = ctypes.windll.kernel32.SetConsoleTextAttribute
+GetConsoleScreenBufferInfo = ctypes.windll.kernel32.GetConsoleScreenBufferInfo
 
 
 def get_text_attr() -> WORD:
     """Returns the character attributes (colors) of the console screen
     buffer."""
     csbi = CONSOLE_SCREEN_BUFFER_INFO()
-    GetConsoleScreenBufferInfo(stdout_handle, byref(csbi))
+    GetConsoleScreenBufferInfo(stdout_handle, ctypes.byref(csbi))
     return csbi.wAttributes
+
+
+def get_distinct_attr() -> (WORD, WORD, WORD, WORD):
+    """Returns a tuple with 4 values: foreground color, foreground intensity,
+    background color, and background intensity"""
+    attr = get_text_attr()
+    return (
+        attr & FOREGROUND_GREY,
+        attr & FOREGROUND_INTENSITY,
+        attr & BACKGROUND_GREY,
+        attr & BACKGROUND_INTENSITY,
+    )
 
 
 def set_text_attr(color: int) -> None:
