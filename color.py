@@ -65,7 +65,7 @@ SetConsoleTextAttribute = windll.kernel32.SetConsoleTextAttribute
 GetConsoleScreenBufferInfo = windll.kernel32.GetConsoleScreenBufferInfo
 
 
-def get_text_attr():
+def get_text_attr() -> WORD:
     """Returns the character attributes (colors) of the console screen
     buffer."""
     csbi = CONSOLE_SCREEN_BUFFER_INFO()
@@ -73,7 +73,7 @@ def get_text_attr():
     return csbi.wAttributes
 
 
-def set_text_attr(color):
+def set_text_attr(color: int) -> None:
     """Sets the character attributes (colors) of the console screen
     buffer. Color is a combination of foreground and background color,
     foreground and background intensity."""
