@@ -2,7 +2,6 @@
 Test module color. Requires Python 3.
 """
 
-
 import sys
 import color
 
